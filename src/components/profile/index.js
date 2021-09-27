@@ -29,20 +29,19 @@ class ProfileCard extends Component {
       headers: {
         Authorization: `Bearer ${jwtToken}`,
       },
-      method: 'GET',
+      method: 'Get',
     }
+
     const response = await fetch(apiUrl, options)
     const data = await response.json()
-    const nd = [data.profile_details]
-
     if (response.ok === true) {
-      const formattedUser = nd.map(each => ({
-        name: each.name,
-        profileImageUrl: each.profile_image_url,
-        shortBio: each.short_bio,
-      }))
+      const formattedData = {
+        name: data.profile_details.name,
+        profileImageUrl: data.profile_details.profile_image_url,
+        shortBio: data.profile_details.short_bio,
+      }
       this.setState({
-        userDetails: formattedUser,
+        userDetails: formattedData,
         profileApiStatus: apiStatusConstants.success,
       })
     } else {
@@ -52,12 +51,11 @@ class ProfileCard extends Component {
 
   userProfile = () => {
     const {userDetails} = this.state
-
     return (
       <div className="userProfile">
-        <img alt="profile" src={userDetails[0].profileImageUrl} />
-        <h1>{userDetails[0].name}</h1>
-        <p>{userDetails[0].shortBio}</p>
+        <img alt="profile" src={userDetails.profileImageUrl} />
+        <h1>{userDetails.name}</h1>
+        <p>{userDetails.shortBio}</p>
       </div>
     )
   }
@@ -68,7 +66,7 @@ class ProfileCard extends Component {
 
   renderProfileFailure = () => (
     <div>
-      <button className="logoutBtn" onClick={this.onReTryProfile} type="button">
+      <button onClick={this.onReTryProfile} type="button">
         Retry
       </button>
     </div>

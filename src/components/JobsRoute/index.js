@@ -1,13 +1,13 @@
 import {Component} from 'react'
 
 import {Link, Redirect} from 'react-router-dom'
-import {AiFillHome, AiFillStar} from 'react-icons/ai'
+import {AiFillStar} from 'react-icons/ai'
 import {BsFillBagFill, BsSearch} from 'react-icons/bs'
-import {RiLogoutBoxRFill} from 'react-icons/ri'
 import {ImLocation} from 'react-icons/im'
 import Loader from 'react-loader-spinner'
 
 import Cookies from 'js-cookie'
+import Header from '../header'
 import FilterGroup from '../filterGroup'
 import ProfileCard from '../profile'
 
@@ -75,22 +75,21 @@ class Job extends Component {
     this.setState({jobsApiStatus: apiStatusConstants.inProgress})
     const {type, salary, search} = this.state
     const strType = type.join()
-    const jwtToken = Cookies.get('jwt_token')
     const apiUrl = `https://apis.ccbp.in/jobs?employment_type=${strType}&minimum_package=${salary}&search=${search}`
+    const jwtToken = Cookies.get('jwt_token')
     const options = {
       headers: {
         Authorization: `Bearer ${jwtToken}`,
       },
       method: 'GET',
     }
-
     const response = await fetch(apiUrl, options)
     const data = await response.json()
     if (response.ok === true) {
-      const formattedDetails = data.jobs.map(each => ({
-        id: each.id,
+      const formattedData = data.jobs.map(each => ({
         companyLogoUrl: each.company_logo_url,
         employmentType: each.employment_type,
+        id: each.id,
         jobDescription: each.job_description,
         location: each.location,
         packagePerAnnum: each.package_per_annum,
@@ -98,7 +97,7 @@ class Job extends Component {
         title: each.title,
       }))
       this.setState({
-        jobsList: formattedDetails,
+        jobsList: formattedData,
         jobsApiStatus: apiStatusConstants.success,
       })
     } else {
@@ -181,7 +180,7 @@ class Job extends Component {
       />
       <h1>Oops! Something Went Wrong</h1>
       <p>We cannot seem to find the page you are looking for</p>
-      <button className="RetryBtn" onClick={this.onReTryJob} type="button">
+      <button onClick={this.onReTryJob} type="button">
         Retry
       </button>
     </div>
@@ -236,43 +235,13 @@ class Job extends Component {
     }
     return (
       <div className="joBM">
-        <div className="nav">
-          <Link style={{textDecoration: 'none'}} to="/">
-            <img
-              width={100}
-              alt="website logo"
-              src="https://assets.ccbp.in/frontend/react-js/logo-img.png  "
-            />
-          </Link>
-          <div className="links">
-            <Link style={{textDecoration: 'none'}} to="/">
-              <h1 className="linkName">Home</h1>
-            </Link>
-            <Link style={{textDecoration: 'none'}} to="/jobs">
-              <h1 className="linkName">Jobs</h1>
-            </Link>
-          </div>
-          <button onClick={this.logOut} className="logoutBtn" type="button">
-            LogOut
-          </button>
-          <div className="small">
-            <Link style={{textDecoration: 'none'}} to="/">
-              <AiFillHome fontSize="30px" color="white" />
-            </Link>
-            <Link style={{textDecoration: 'none'}} to="/jobs">
-              <BsFillBagFill fontSize="30px" color="white" />
-            </Link>
-            <button onClick={this.logOut} className="logoutIcon" type="button">
-              <RiLogoutBoxRFill fontSize="30px" color="white" />
-            </button>
-          </div>
-        </div>
+        <Header />
         <div className="jobsMain">
           <div className="optionsCon">
             <div className="profileCon">
               <ProfileCard />
-              <hr />
             </div>
+            <hr />
             <FilterGroup
               salaryRangesList={salaryRangesList}
               employmentTypesList={employmentTypesList}

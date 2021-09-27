@@ -1,15 +1,15 @@
 import {Component} from 'react'
 
-import {Link, Redirect} from 'react-router-dom'
-import {AiFillHome, AiFillStar} from 'react-icons/ai'
+import {Redirect} from 'react-router-dom'
+import {AiFillStar} from 'react-icons/ai'
 import {BsFillBagFill} from 'react-icons/bs'
-import {RiLogoutBoxRFill} from 'react-icons/ri'
 import {ImLocation} from 'react-icons/im'
 import {HiOutlineExternalLink} from 'react-icons/hi'
 
 import Loader from 'react-loader-spinner'
 
 import Cookies from 'js-cookie'
+import Header from '../header'
 
 import './index.css'
 
@@ -32,7 +32,7 @@ class JobItemDetails extends Component {
   }
 
   getItemDetails = async () => {
-    this.setState({apiStatus: 'IN_PROGRESS'})
+    this.setState({apiStatus: apiStatusConstants.inProgress})
     const {match} = this.props
     const {params} = match
     const {id} = params
@@ -46,7 +46,7 @@ class JobItemDetails extends Component {
     }
     const response = await fetch(apiUrl, options)
 
-    if (response.ok) {
+    if (response.ok === true) {
       const data = await response.json()
       const formattedJobDetails = [data.job_details].map(each => ({
         companyLogoUrl: each.company_logo_url,
@@ -197,7 +197,6 @@ class JobItemDetails extends Component {
         className="RetryBtn"
         type="button"
         onClick={this.onReTryJobDetails}
-        
       >
         Retry
       </button>
@@ -241,37 +240,7 @@ class JobItemDetails extends Component {
     }
     return (
       <div className="itemHead">
-        <div className="nav">
-          <Link style={{textDecoration: 'none'}} to="/">
-            <img
-              width={100}
-              alt="website logo"
-              src="https://assets.ccbp.in/frontend/react-js/logo-img.png  "
-            />
-          </Link>
-          <div className="links">
-            <Link style={{textDecoration: 'none'}} to="/">
-              <h1 className="linkName">Home</h1>
-            </Link>
-            <Link style={{textDecoration: 'none'}} to="/jobs">
-              <h1 className="linkName">Jobs</h1>
-            </Link>
-          </div>
-          <button onClick={this.logOut} className="logoutBtn" type="button">
-            LogOut
-          </button>
-          <div className="small">
-            <Link style={{textDecoration: 'none'}} to="/">
-              <AiFillHome fontSize="30px" color="white" />
-            </Link>
-            <Link style={{textDecoration: 'none'}} to="/jobs">
-              <BsFillBagFill fontSize="30px" color="white" />
-            </Link>
-            <button onClick={this.logOut} className="logoutIcon" type="button">
-              <RiLogoutBoxRFill fontSize="30px" color="white" />
-            </button>
-          </div>
-        </div>
+        <Header />
         <div className="itemMain">{this.renderItemDetails()}</div>
       </div>
     )
